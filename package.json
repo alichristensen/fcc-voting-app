@@ -1,0 +1,24 @@
+{
+  "name": "fcc-voting-app",
+  "version": "1.0.0",
+  "description": "Full stack javascript app where an authenticated user can create and vote on polls",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alichristensen/fcc-voting-app.git"
+  },
+  "author": "Ali Christensen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alichristensen/fcc-voting-app/issues"
+  },
+  "homepage": "https://github.com/alichristensen/fcc-voting-app#readme",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.1",
+    "mongoose": "^4.8.1"
+  }
+}
