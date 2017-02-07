@@ -1,0 +1,16 @@
+<% include partials/header %>
+
+<div class="container container-fluid">
+	<div style="width: 80%; margin: 0 auto;">
+		<h1 style="text-align: center">Polls</h1>
+
+		<% polls.forEach(function(poll){ %>
+			<p><a class="btn btn-default" style="width: 100%;" href="/polls/<%= poll._id %>"><%= poll.name %></a></p>
+		<% }); %>
+
+		<a href="polls/new" class="btn btn-primary btn-small">Create New</a>
+	</div>
+</div>
+
+
+<% include partials/footer %>

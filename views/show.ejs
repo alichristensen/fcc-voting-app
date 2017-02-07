@@ -1,0 +1,25 @@
+<% include partials/header %>
+
+<div class="container container-fluid">
+	<div style="width: 50%; margin: 0 auto;">
+		<h1 style="text-align: center;"><%= poll.name %></h1>
+		<ul>
+			<% poll.items.forEach(function(item){ %>
+				<li><%= item.label %>: 
+					<span class="pull-right">
+						<%= item.voteTotal %>
+					</span>
+					<form action="/polls/<%= poll._id %>/vote/<%= item._id %>?_method=PUT" method="POST">
+						<input style="width: 100%;" class="btn btn-success btn-xs" type="submit" value="vote">
+					</form>
+				</li>
+			<% }); %>
+		</ul>
+		<form style="display: inline;" action="/polls/<%= poll._id %>?_method=DELETE" method="POST">
+			<input class="btn btn-danger btn-xs" type="submit" value="Delete">
+		</form>
+		<a class="btn btn-warning btn-xs" href="/polls/<%= poll._id %>/edit">Edit</a>
+	</div>
+</div>
+
+<% include partials/footer %>
