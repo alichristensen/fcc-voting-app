@@ -3,22 +3,22 @@
 <div class="container container-fluid">
 	<div style="width: 50%; margin: 0 auto;">
 		<h1 style="text-align: center;"><%= poll.name %></h1>
-		<ul>
-			<% poll.items.forEach(function(item){ %>
-				<li><%= item.label %>: 
-					<span class="pull-right">
-						<%= item.voteTotal %>
-					</span>
-					<form action="/polls/<%= poll._id %>/vote/<%= item._id %>?_method=PUT" method="POST">
-						<input style="width: 100%;" class="btn btn-success btn-xs" type="submit" value="vote">
-					</form>
-				</li>
-			<% }); %>
-		</ul>
-		<form style="display: inline;" action="/polls/<%= poll._id %>?_method=DELETE" method="POST">
-			<input class="btn btn-danger btn-xs" type="submit" value="Delete">
-		</form>
+		<div style="text-align: center;">
+			<form style="display: inline;" action="/polls/<%= poll._id %>?_method=DELETE" method="POST">
+				<input class="btn btn-danger btn-xs" type="submit" value="Delete">
+			</form>
 		<a class="btn btn-warning btn-xs" href="/polls/<%= poll._id %>/edit">Edit</a>
+		</div>
+		<hr>
+		<% poll.items.forEach(function(item){ %>
+			<div style="background: #17a589; width: <%= (item.voteTotal/total)*100 %>%; border-radius: 5%; margin: 5px; color: white; height: 25px;">
+				<p style="margin: 5px;">
+					<form style="margin: 10px;" action="/polls/<%= poll._id %>/vote/<%= item._id %>?_method=PUT" method="POST">
+						<input style="background: inherit; border: none;" type="submit" value="<%= item.label %> : <%= item.voteTotal %>">
+					</form>
+				</p>
+			</div>
+		<% }) %>
 	</div>
 </div>
 

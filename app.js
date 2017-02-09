@@ -1,6 +1,6 @@
 var express        = require('express'), 
 	app            = express(), 
-	port           = 5000;
+	port           = 5000,
 	mongoose       = require('mongoose'), 
 	bodyParser     = require('body-parser'), 
 	methodOverride = require('method-override'); 
@@ -12,7 +12,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 
 var items = [];
-var count; 
 
 var pollSchema = new mongoose.Schema({
 	name: String,
@@ -57,11 +56,15 @@ app.post("/polls", validatePollItems, function(req, res){
 });
 
 app.get("/polls/:id", function(req, res){
+	var count = 0;
 	Poll.findById(req.params.id, function(err, found){
 		if (err) {
 			console.log(err);
 		} else {
-			res.render("show", {poll: found});
+			found.items.forEach(function(item) {
+				count = count + item.voteTotal;
+			});
+			res.render("show", {poll: found, total: count});
 		}
 	});
 });
@@ -170,14 +173,12 @@ function updatePollItems(req, res, next) {
 				voteTotal: found.items[1].voteTotal
 			});
 			if (req.body.item3 !== "") {
-				if (!found.items[2].voteTotal) {
-					console.log("empty");
+				if (!found.items[2]) {
 					items.push({
 						label: req.body.item3, 
 						voteTotal: 0
 					});
 				} else {
-					console.log("created");
 					items.push({
 						label: req.body.item3, 
 						voteTotal: found.items[2].voteTotal
