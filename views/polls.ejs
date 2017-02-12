@@ -1,16 +1,22 @@
 <% include partials/header %>
 
 <div class="container container-fluid">
-	<div style="width: 80%; margin: 0 auto;">
-		<h1 style="text-align: center">Polls</h1>
-
+	<div class="jumbotron">
+		<h1 style="text-align: center">What Would You Rather?</h1>
+	</div>
+	<div style="margin: 0 auto;">
 		<% polls.forEach(function(poll){ %>
 			<p><a class="btn btn-default" style="width: 100%;" href="/polls/<%= poll._id %>"><%= poll.name %></a></p>
 		<% }); %>
 
-		<a href="polls/new" class="btn btn-primary btn-small">Create New</a>
+		<a href="polls/new" style="background-color: rgb(0, 96, 100);" class="btn btn-primary btn-small">Create New</a>
 	</div>
 </div>
 
+<div style="position: fixed; bottom: 0px; width: 100%;">
+	<p style="text-align: center;">Created by 
+		<a href="https://github.com/alichristensen" target="_blank">Ali Christensen</a>
+	</p>
+</div>
 
 <% include partials/footer %>

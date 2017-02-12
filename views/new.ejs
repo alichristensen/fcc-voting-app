@@ -1,12 +1,15 @@
 <% include partials/header %>
 
 <div class="container">
-	<h1>Create New Poll</h1>
-
-
+	<h1>Create New Question</h1>
+	<hr>
+	<p>
+		To add a new question enter your question under *Question Title*, add two to three options, then hit the Submit button to poll your friends!
+	</p>
+	<hr>
 	<form action="/polls" method="POST">
 		<div class="form-group">
-			<input class="form-control" type="text" name="title" placeholder="Poll Title">
+			<input class="form-control" type="text" name="title" placeholder="Question Title">
 		</div>
 		<div class="form-group">
 			<input class="form-control" type="text" name="item1" placeholder="Option 1">
@@ -18,7 +21,7 @@
 			<input class="form-control" type="text" name="item3" placeholder="Option 3">
 		</div>
 		<div class="form-group">
-			<button class="btn btn-lg btn-success">Submit</button>
+			<button style="background-color: rgb(0, 96, 100);" class="btn btn-lg btn-success">Submit</button>
 		</div>
 	</form>
 </div>

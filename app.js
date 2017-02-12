@@ -1,194 +1,46 @@
 var express        = require('express'), 
 	app            = express(), 
 	port           = 5000,
+	flash          = require('connect-flash');
 	mongoose       = require('mongoose'), 
 	bodyParser     = require('body-parser'), 
-	methodOverride = require('method-override'); 
+	methodOverride = require('method-override'), 
+	Poll           = require('./models/poll.js'), 
+	User           = require('./models/user.js'), 
+	passport       = require('passport'), 
+	LocalStrategy  = require('passport-local'); 
+
+var indexRoutes = require('./routes/index');
 
 mongoose.connect("mongodb://localhost/voting_app"); 
 app.set("view engine", "ejs"); 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
+app.use(flash());
 
 var items = [];
 
-var pollSchema = new mongoose.Schema({
-	name: String,
-	items: [
-		 {
-			label: String, 
-			voteTotal: {type: Number, default: 0}
-		}
-	]
-});
-var Poll = mongoose.model("Poll", pollSchema);
+//PASSPORT CONFIG
+app.use(require('express-session')({
+	secret: "pearl is my favorite", 
+	resave: false, 
+	saveUninitialized: false
+})); 
+app.use(passport.initialize()); 
+app.use(passport.session()); 
+passport.use(new LocalStrategy(User.authenticate())); 
+passport.serializeUser(User.serializeUser()); 
+passport.deserializeUser(User.deserializeUser());
 
-app.get("/", function(req, res){
-	res.render("index");
-});
-
-app.get("/polls", function(req, res){
-	Poll.find({}, function(err, polls){
-		if (err) {
-			console.log(err);
-		} else {
-			res.render("polls", {polls: polls});
-		}
-	});
+app.use(function(req, res, next){
+	res.locals.currentUser = req.user;
+	res.locals.error = req.flash('error');
+	res.locals.success = req.flash('success'); 
+	next();
 });
 
-app.get("/polls/new", function(req, res){
-	res.render("new.ejs");
-});
-
-app.post("/polls", validatePollItems, function(req, res){
-	Poll.create({
-		name: req.body.title, 
-		items: items
-	}, function(err, poll){
-		if (err) {
-			console.log(err);
-		} else {
-			res.redirect("/polls");
-		}
-	});
-});
-
-app.get("/polls/:id", function(req, res){
-	var count = 0;
-	Poll.findById(req.params.id, function(err, found){
-		if (err) {
-			console.log(err);
-		} else {
-			found.items.forEach(function(item) {
-				count = count + item.voteTotal;
-			});
-			res.render("show", {poll: found, total: count});
-		}
-	});
-});
-
-//edit route
-app.get("/polls/:id/edit", function(req, res){
-	Poll.findById(req.params.id, function(err, found){
-		if (err) {
-			console.log(err);
-		} else {
-			res.render("edit", {poll: found});
-		}
-	});
-});
-
-//update route
-app.put("/polls/:id", updatePollItems, function(req, res){
-	Poll.findByIdAndUpdate(req.params.id, {
-		name: req.body.title, 
-		items: items
-	}, function(err, updated){
-		if (err) {
-			console.log(err);
-		} else {
-			console.log(updated);
-			res.redirect("/polls/" + updated._id);
-		}
-	});
-});
-
-app.put("/polls/:id/vote/:itemID", function(req, res){
-	var updatedVoteTotal;
-	var newItems = []
-	Poll.findById(req.params.id, function(err, found) {
-		if (err) {
-			console.log(err);
-		} else {
-			found.items.forEach(function(i){
-				if (i._id == req.params.itemID) {
-					updatedVoteTotal = ++(i.voteTotal);
-					newItems.push({label: i.label, voteTotal: updatedVoteTotal});
-				} else {
-					newItems.push({label: i.label, voteTotal: i.voteTotal});
-				}
-			});
-			Poll.findByIdAndUpdate(req.params.id, {
-				items: newItems
-			}, function(err, updated){
-				if (err) {
-					console.log(err);
-				} else {
-					res.redirect("/polls/" + req.params.id);
-				}
-			});
-		}
-	});
-});
-
-//destroy route
-app.delete("/polls/:id", function(req, res){
-	Poll.findByIdAndRemove(req.params.id, function(err){
-		if (err) {
-			res.redirect("/polls");
-		} else {
-			res.redirect("/polls");
-		}
-	});
-});
-
-function validatePollItems(req, res, next) {
-	//clear items array
-	items = [];
-	if (req.body.item1 == "" || req.body.item2 =="") {
-		return res.send("you must enter at least two polling options");
-	}
-	items.push({
-		label: req.body.item1
-	}, 
-	{
-		label: req.body.item2
-	});
-	if (req.body.item3 !== "") {
-		items.push({
-			label: req.body.item3
-		});
-	}
-	return next();
-}
-
-function updatePollItems(req, res, next) {
-	//clear items array
-	items = [];
-	if (req.body.item1 == "" || req.body.item2 =="") {
-		return res.send("you must enter at least two polling options");
-	}
-	Poll.findById(req.params.id, function(err, found){
-		if (err) {
-			console.log(err);
-		} else {
-			items.push({
-				label: req.body.item1,
-				voteTotal: found.items[0].voteTotal
-			}, 
-			{
-				label: req.body.item2,
-				voteTotal: found.items[1].voteTotal
-			});
-			if (req.body.item3 !== "") {
-				if (!found.items[2]) {
-					items.push({
-						label: req.body.item3, 
-						voteTotal: 0
-					});
-				} else {
-					items.push({
-						label: req.body.item3, 
-						voteTotal: found.items[2].voteTotal
-					});
-				}
-			}
-			return next();
-		}
-	});
-}
+app.use(indexRoutes);
 
 app.listen(port, function(){
 	console.log("listening at port: " + port);

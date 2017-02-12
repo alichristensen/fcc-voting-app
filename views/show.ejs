@@ -1,18 +1,29 @@
 <% include partials/header %>
 
 <div class="container container-fluid">
-	<div style="width: 70%; margin: 0 auto;">
+	<div style="margin: 0 auto; width: 80%;">
 		<h1 style="text-align: center;"><%= poll.name %></h1>
-		<div style="text-align: center;">
-			<form style="display: inline;" action="/polls/<%= poll._id %>?_method=DELETE" method="POST">
-				<input class="btn btn-danger btn-xs" type="submit" value="Delete">
-			</form>
-		<a class="btn btn-warning btn-xs" href="/polls/<%= poll._id %>/edit">Edit</a>
-		</div>
+		<p style="text-align: center">
+			<em>Created by: <%= poll.author.username %>
+				on <%= poll.date_created %>
+			</em>
+		</p>
+		<% if(currentUser && poll.author.id.equals(currentUser._id)) { %>
+			<div style="text-align: center;">
+				<form style="display: inline;" action="/polls/<%= poll._id %>?_method=DELETE" method="POST">
+					<input class="btn btn-danger btn-xs" type="submit" value="Delete">
+				</form>
+			<a class="btn btn-warning btn-xs" href="/polls/<%= poll._id %>/edit">Edit</a>
+			</div>
+		<% } %>
 		<hr>
-		<% poll.items.forEach(function(item){ %>
+		<p>Click the number under the answer choice to cast your vote</p>
+		<hr>
+		<div>
+			<% poll.items.forEach(function(item){ %>
 			<% if (item.voteTotal === 0) { %>
-				<div style="background: white; width: <%= (item.voteTotal/total)*100 %>%; border-radius: 5%; margin: 5px; color: rgb(38, 198, 218); height: 25px;">
+				<p><%= item.label %></p>
+				<div style="width: <%= (item.voteTotal/total)*100 %>%; border-radius: 5%; margin: 10px; height: 25px; padding-right: 10px;">
 					<p style="margin: 5px;">
 						<form style="margin: 10px;" action="/polls/<%= poll._id %>/vote/<%= item._id %>?_method=PUT" method="POST">
 							<input style="background: inherit; border: none;" type="submit" 
@@ -21,7 +32,8 @@
 					</p>
 				</div>
 			<% } else { %>
-				<div style="background: rgb(38, 198, 218); width: <%= (item.voteTotal/total)*100 %>%; border-radius: 5%; margin: 5px; color: white; height: 25px;">
+				<p><%= item.label %></p>
+				<div style="background: rgb(0, 96, 100); width: <%= (item.voteTotal/total)*100 %>%; border-radius: 5%; margin: 5px; color: white; height: 25px;">
 					<p style="margin: 5px;">
 						<form style="margin: 10px;" action="/polls/<%= poll._id %>/vote/<%= item._id %>?_method=PUT" method="POST">
 							<input style="background: inherit; border: none;" type="submit" value="<%= item.voteTotal %>">
@@ -30,6 +42,7 @@
 				</div>
 			<% } %>
 		<% }) %>
+		</div>
 	</div>
 </div>
 
