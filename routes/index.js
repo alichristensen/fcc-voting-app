@@ -255,7 +255,7 @@ function validateIP(req, res, next) {
 			res.redirect("back");
 		} else {
 			found.ips.forEach(function(ip){
-				console.log(req.header('x-forwarded-for'));
+				console.log("IP is : " + req.header('x-forwarded-for'));
 				if (ip === (req.header('x-forwarded-for') || req.connection.remoteAddress)) {
 					duplicateIP = true;
 				}
