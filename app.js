@@ -1,6 +1,6 @@
 var express        = require('express'), 
 	app            = express(), 
-	port           = 5000,
+	port           = process.env.PORT || 5000,
 	flash          = require('connect-flash');
 	mongoose       = require('mongoose'), 
 	bodyParser     = require('body-parser'), 
@@ -12,7 +12,7 @@ var express        = require('express'),
 
 var indexRoutes = require('./routes/index');
 
-mongoose.connect("mongodb://localhost/voting_app"); 
+mongoose.connect("mongodb://alichristensen:Yeezy7@ds151279.mlab.com:51279/polls"); 
 app.set("view engine", "ejs"); 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
