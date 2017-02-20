@@ -12,7 +12,7 @@ var express        = require('express'),
 
 var indexRoutes = require('./routes/index');
 
-mongoose.connect("mongodb://alichristensen:Yeezy7@ds151279.mlab.com:51279/polls"); 
+mongoose.connect(process.env.DATABASEURL); 
 app.set("view engine", "ejs"); 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: true}));
